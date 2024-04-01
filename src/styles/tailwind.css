@@ -1,0 +1,274 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@font-face {
+    font-family: 'Mona Sans';
+    font-weight: 200 900;
+    font-display: block;
+    font-style: normal;
+    font-stretch: 75% 125%;
+    src: url('../fonts/Mona-Sans.var.woff2') format('woff2');
+  }
+  
+  .typography {
+    color: theme(colors.neutral.950);
+    font-size: theme(fontSize.xl);
+    line-height: theme(fontSize.xl[1].lineHeight);
+  
+    --shiki-color-text: theme(colors.white);
+    --shiki-color-background: theme(colors.neutral.950);
+    --shiki-token-constant: theme(colors.neutral.300);
+    --shiki-token-string: theme(colors.neutral.400);
+    --shiki-token-comment: theme(colors.neutral.500);
+    --shiki-token-keyword: theme(colors.neutral.400);
+    --shiki-token-parameter: theme(colors.neutral.400);
+    --shiki-token-function: theme(colors.neutral.300);
+    --shiki-token-string-expression: theme(colors.neutral.300);
+    --shiki-token-punctuation: theme(colors.neutral.400);
+  
+    :where(.typography > *) {
+      margin-top: theme(spacing.6);
+      margin-bottom: theme(spacing.6);
+    }
+  
+    /* Headings */
+    :where(h2) {
+      font-weight: theme(fontWeight.semibold);
+      font-family: theme(fontFamily.display);
+      font-variation-settings: theme(fontFamily.display[1].fontVariationSettings);
+      font-size: theme(fontSize.2xl);
+      line-height: theme(fontSize.2xl[1].lineHeight);
+      margin-top: theme(spacing.16);
+    }
+  
+    :where(h3) {
+      font-weight: theme(fontWeight.semibold);
+      font-family: theme(fontFamily.display);
+      font-variation-settings: theme(fontFamily.display[1].fontVariationSettings);
+      font-size: theme(fontSize.xl);
+      line-height: theme(fontSize.xl[1].lineHeight);
+      margin-top: theme(spacing.10);
+    }
+  
+    :where(h2 + h3) {
+      margin-top: 0;
+    }
+  
+    /* Lists */
+    :where(ul, ol) {
+      padding-left: 1.5rem;
+    }
+  
+    :where(ul) {
+      list-style-type: disc;
+    }
+  
+    :where(ol) {
+      list-style-type: decimal;
+    }
+  
+    :where(li) {
+      padding-left: theme(spacing.3);
+      margin-top: theme(spacing.6);
+    }
+  
+    :where(li)::marker {
+      color: theme(colors.neutral.500);
+    }
+  
+    :where(li > *),
+    :where(li li) {
+      margin-top: theme(spacing.4);
+    }
+  
+    :where(ol > li)::marker {
+      font-size: theme(fontSize.base);
+      font-weight: theme(fontWeight.semibold);
+    }
+  
+    /* Tables */
+    :where(table) {
+      width: 100%;
+      text-align: left;
+      font-size: theme(fontSize.base);
+      line-height: theme(fontSize.base[1].lineHeight);
+    }
+  
+    :where(th) {
+      font-weight: theme(fontWeight.semibold);
+    }
+  
+    :where(thead th) {
+      padding-bottom: theme(spacing.6);
+      border-bottom: 1px solid theme(colors.neutral.950);
+    }
+  
+    :where(td) {
+      vertical-align: top;
+      padding-top: theme(spacing.6);
+      padding-bottom: theme(spacing.6);
+      border-bottom: 1px solid theme(colors.neutral.950 / 0.1);
+    }
+  
+    :where(:is(th, td):not(:last-child)) {
+      padding-right: theme(spacing.6);
+    }
+  
+    /* Code blocks */
+    :where(pre) {
+      display: flex;
+      background-color: theme(colors.neutral.950);
+      border-radius: theme(borderRadius.4xl);
+      overflow-x: auto;
+      margin-top: theme(spacing.10);
+      margin-bottom: theme(spacing.10);
+      margin-left: calc(-1 * theme(spacing.6));
+      margin-right: calc(-1 * theme(spacing.6));
+  
+      @screen sm {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  
+    :where(pre code) {
+      flex: none;
+      padding: theme(padding.8) theme(padding.6);
+      font-size: theme(fontSize.base);
+      line-height: theme(lineHeight.8);
+      color: theme(colors.white);
+  
+      @screen sm {
+        padding: theme(spacing.10);
+      }
+    }
+  
+    /* <hr> */
+    :where(hr) {
+      border-color: theme(colors.neutral.950 / 0.1);
+      margin-top: theme(spacing.24);
+      margin-bottom: theme(spacing.24);
+    }
+  
+    /* Inline text */
+    :where(a) {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.15em;
+      text-decoration-skip-ink: none;
+      font-weight: theme(fontWeight.semibold);
+    }
+  
+    :where(strong) {
+      font-weight: theme(fontWeight.semibold);
+    }
+  
+    :where(code:not(pre code)) {
+      font-size: calc(18 / 20 * 1em);
+      font-weight: theme(fontWeight.semibold);
+  
+      &::before,
+      &::after {
+        content: '`';
+      }
+    }
+  
+    :where(h2 code, h3 code) {
+      font-weight: theme(fontWeight.bold);
+    }
+  
+    /* Figures */
+    :where(figure) {
+      margin-top: theme(spacing.32);
+      margin-bottom: theme(spacing.32);
+    }
+  
+    /* Spacing overrides */
+    :where(.typography:first-child > :first-child),
+    :where(li > :first-child) {
+      margin-top: 0 !important;
+    }
+  
+    :where(.typography:last-child > :last-child),
+    :where(li > :last-child) {
+      margin-bottom: 0 !important;
+    }
+  }
+  
