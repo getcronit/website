@@ -27,13 +27,13 @@ export function Offices({ invert = false, ...props }) {
           1030, Wien, Österreich
         </Office>
       </li>
-      {/* <li>
-        <Office name="Billund" invert={invert}>
-          24 Lego Allé
+      <li>
+        <Office name="Öffnungszeiten" invert={invert}>
+          Montag – Freitag
           <br />
-          7190, Billund, Denmark
+          09:00 – 18:00
         </Office>
-      </li> */}
+      </li>
     </ul>
   );
 }

@@ -1,71 +1,56 @@
 import { ContactSection } from "@/components/ContactSection";
 import { Container } from "@/components/Container";
 import { FadeIn } from "@/components/FadeIn";
-import { GrayscaleTransitionImage } from "@/components/GrayscaleTransitionImage";
-import { PageIntro } from "@/components/PageIntro";
 import { PageLinks } from "@/components/PageLinks";
 
-import { Field, PageConfig, PageProps } from "@atsnek/jaen";
+import { PageConfig, PageProps, useJaenPageIndex, usePage } from "@atsnek/jaen";
 
-import ballonsSvg from "../images/ballons-ballons.svg";
-import { Blockquote, BlockquoteWithImage } from "@/components/Blockquote";
+import { BlockquoteWithImage } from "@/components/Blockquote";
 import { StatList, StatListItem } from "@/components/StatList";
 import { TagList, TagListItem } from "@/components/TagList";
-import { MdxField } from "@atsnek/jaen-fields-mdx";
 import { formatDate } from "@/lib/utils";
+import { MdxField } from "@atsnek/jaen-fields-mdx";
+import { useEffect, useMemo } from "react";
 
 const Page: React.FC<PageProps> = () => {
-  let id = "1";
-  let allCaseStudies = [
-    {
-      id: "1",
-      href: "/work/ballons-and-ballons",
-      client: "Ballons & Ballons",
-      title: "Revolutionizing the way we think about balloons",
-      description: "A new way to experience the joy of balloons.",
-      summary: [
-        "We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome. We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome. We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome.",
-        "The new web app has been a huge success, and we couldn't be happier with the outcome.",
-      ],
-      logo: ballonsSvg,
-      date: "2022-01-01",
-      service: "Web development",
-      testimonial: {
-        author: { name: "Phobia", role: "CEO" },
-        content:
-          "Cronit hat uns bei der Entwicklung unserer neuen Webapp hervorragend unterstützt. Die Zusammenarbeit war sehr professionell und das Ergebnis hat unsere Erwartungen übertroffen.",
-      },
-    },
-  ];
-  let caseStudy = allCaseStudies.find((caseStudy) => caseStudy.id === id);
-  let moreCaseStudies = allCaseStudies
-    .filter((caseStudy) => caseStudy.id !== id)
-    .slice(0, 2);
+  const page = usePage({});
+  const index = useJaenPageIndex({ jaenPageId: "JaenPage /blog/" });
+
+  const moreBlogs = useMemo(() => {
+    return index.childPages
+      .filter((childPage) => childPage.id !== page.id)
+      .slice(0, 2)
+      .map((childPage) => {
+        return {
+          title: childPage.jaenPageMetadata?.title,
+          date: childPage.jaenPageMetadata?.blogPost?.date || "",
+          description: childPage.jaenPageMetadata?.description,
+          href: `/blog/${childPage.slug}`,
+        };
+      });
+  }, [index]);
+
+  const date = page.jaenPageMetadata?.blogPost?.date || "";
 
   return (
     <>
       <Container as="article" className="mt-24 sm:mt-32 lg:mt-40">
         <FadeIn>
           <header className="mx-auto flex max-w-5xl flex-col text-center">
-            <Field.Text
-              as="h1"
-              name="title"
-              defaultValue="Article Title"
-              className="mt-6 font-display text-5xl font-medium tracking-tight text-neutral-950 [text-wrap:balance] sm:text-6xl"
-            />
+            <h1 className="mt-6 font-display text-5xl font-medium tracking-tight text-neutral-950 [text-wrap:balance] sm:text-6xl">
+              {page.jaenPageMetadata?.title}
+            </h1>
 
-            <Field.Text
-              as="time"
-              name="date"
-              defaultValue={formatDate(new Date().toISOString().split("T")[0])}
+            <time
               className="mt-6 text-sm text-neutral-950"
-            />
+              defaultValue={formatDate(date.split("T")[0])}
+            >
+              {formatDate(date.split("T")[0])}
+            </time>
 
-            <Field.Text
-              name="author.name"
-              defaultValue="Author, CEO von Cronit"
-              className="mt-6 text-sm font-semibold text-neutral-950"
-            />
+            <p className="mt-6 max-w-3xl mx-auto text-xl text-neutral-600">
+              {page.jaenPageMetadata?.blogPost?.author}
+            </p>
           </header>
         </FadeIn>
 
@@ -75,7 +60,13 @@ const Page: React.FC<PageProps> = () => {
               components={{
                 TagList,
                 TagListItem,
-                Blockquote: BlockquoteWithImage,
+                Blockquote: ({ children }) => {
+                  return (
+                    <BlockquoteWithImage id={page.id}>
+                      {children}
+                    </BlockquoteWithImage>
+                  );
+                },
                 StatList,
                 StatListItem,
               }}
@@ -84,13 +75,11 @@ const Page: React.FC<PageProps> = () => {
         </FadeIn>
       </Container>
 
-      {[].length > 0 && (
-        <PageLinks
-          className="mt-24 sm:mt-32 lg:mt-40"
-          title="More articles"
-          pages={[]}
-        />
-      )}
+      <PageLinks
+        className="mt-24 sm:mt-32 lg:mt-40"
+        title="Mehr Artikel"
+        pages={moreBlogs}
+      />
 
       <ContactSection />
     </>

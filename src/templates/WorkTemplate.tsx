@@ -5,7 +5,14 @@ import { GrayscaleTransitionImage } from "@/components/GrayscaleTransitionImage"
 import { PageIntro } from "@/components/PageIntro";
 import { PageLinks } from "@/components/PageLinks";
 
-import { Field, PageConfig, PageProps } from "@atsnek/jaen";
+import {
+  Field,
+  PageConfig,
+  PageProps,
+  useJaenPageIndex,
+  usePage,
+  withRedux,
+} from "@atsnek/jaen";
 
 import ballonsSvg from "../images/ballons-ballons.svg";
 import { Blockquote, BlockquoteWithImage } from "@/components/Blockquote";
@@ -13,44 +20,39 @@ import { StatList, StatListItem } from "@/components/StatList";
 import { TagList, TagListItem } from "@/components/TagList";
 import { MdxField } from "@atsnek/jaen-fields-mdx";
 import { formatDate } from "@/lib/utils";
+import { useEffect, useMemo } from "react";
 
-const Page: React.FC<PageProps> = () => {
-  let id = "1";
-  let allCaseStudies = [
-    {
-      id: "1",
-      href: "/work/ballons-and-ballons",
-      client: "Ballons & Ballons",
-      title: "Revolutionizing the way we think about balloons",
-      description: "A new way to experience the joy of balloons.",
-      summary: [
-        "We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome. We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome. We worked with Phobia to create a new web app that would revolutionize the way people think about balloons. The result was a stunning success, and we couldn’t be happier with the outcome.",
-        "The new web app has been a huge success, and we couldn't be happier with the outcome.",
-      ],
-      logo: ballonsSvg,
-      date: "2022-01-01",
-      service: "Web development",
-      testimonial: {
-        author: { name: "Phobia", role: "CEO" },
-        content:
-          "Cronit hat uns bei der Entwicklung unserer neuen Webapp hervorragend unterstützt. Die Zusammenarbeit war sehr professionell und das Ergebnis hat unsere Erwartungen übertroffen.",
-      },
-    },
-  ];
-  let caseStudy = allCaseStudies.find((caseStudy) => caseStudy.id === id);
-  let moreCaseStudies = allCaseStudies
-    .filter((caseStudy) => caseStudy.id !== id)
-    .slice(0, 2);
+const Page: React.FC<PageProps> = withRedux(() => {
+  const page = usePage({});
+
+  console.log("apge", page);
+
+  const index = useJaenPageIndex({ jaenPageId: "JaenPage /work/" });
+
+  const moreCaseStudies = useMemo(() => {
+    return index.childPages
+      .filter((childPage) => childPage.id !== page.id)
+      .slice(0, 2)
+      .map((childPage) => {
+        return {
+          title: childPage.jaenPageMetadata?.title,
+          date: childPage.jaenPageMetadata?.blogPost?.date || "",
+          description: childPage.jaenPageMetadata?.description,
+          href: `/work/${childPage.slug}`,
+        };
+      });
+  }, [index]);
 
   return (
     <>
       <article className="mt-24 sm:mt-32 lg:mt-40">
         <header>
-          <PageIntro eyebrow="Case Study" title={caseStudy.title} centered>
-            <Field.Text
-              name="description"
-              defaultValue="Case Study Description"
-            />
+          <PageIntro
+            eyebrow="Case Study"
+            title={page.jaenPageMetadata?.title}
+            centered
+          >
+            <p>{page.jaenPageMetadata?.description}</p>
           </PageIntro>
 
           <FadeIn>
@@ -69,25 +71,16 @@ const Page: React.FC<PageProps> = () => {
                     <div className="border-t border-neutral-200 px-6 py-4 first:border-t-0 sm:border-l sm:border-t-0">
                       <dt className="font-semibold">Jahr</dt>
                       <dd>
-                        <Field.Text
-                          as="time"
-                          name="date"
-                          defaultValue={formatDate(
-                            new Date().toISOString().split("T")[0]
-                          )}
-                        />
-                        {/* <time dateTime={caseStudy.date.split("-")[0]}>
-                          {caseStudy.date.split("-")[0]}
-                        </time> */}
+                        <time
+                          dateTime={page.jaenPageMetadata?.blogPost?.date || ""}
+                        >
+                          {page.jaenPageMetadata?.blogPost?.date?.split("-")[0]}
+                        </time>
                       </dd>
                     </div>
                     <div className="border-t border-neutral-200 px-6 py-4 first:border-t-0 sm:border-l sm:border-t-0">
                       <dt className="font-semibold">Service</dt>
-                      <Field.Text
-                        as="dd"
-                        name="service"
-                        defaultValue="Service A"
-                      />
+                      <dd>{page.jaenPageMetadata?.blogPost?.category}</dd>
                     </div>
                   </dl>
                 </div>
@@ -122,7 +115,7 @@ const Page: React.FC<PageProps> = () => {
       {moreCaseStudies.length > 0 && (
         <PageLinks
           className="mt-24 sm:mt-32 lg:mt-40"
-          title="More case studies"
+          title="Weitere Case Studies"
           pages={moreCaseStudies}
         />
       )}
@@ -130,7 +123,7 @@ const Page: React.FC<PageProps> = () => {
       <ContactSection />
     </>
   );
-};
+});
 
 export default Page;
 

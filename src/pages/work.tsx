@@ -19,13 +19,14 @@ import {
   usePageContext,
 } from "@atsnek/jaen";
 
-import agtLogo from "../images/clients/agt.svg";
+import agtLogo from "../images/clients/agt_black.svg";
 import andenkenSchenkenLogo from "../images/clients/andenken-schenken.png";
 import ballonsLogo from "../images/clients/ballons.svg";
 import citypensionLogo from "../images/clients/citypension.png";
 import kanbonLogo from "../images/clients/kanbon.svg";
-import pharmaziegasseLogo from "../images/clients/pharmaziegasse.png";
-import univieLogo from "../images/clients/univie.svg";
+import pharmaziegasseLogo from "../images/clients/pharmaziegasse_black.png";
+import univieLogo from "../images/clients/univie_black.svg";
+import netsnekLogo from "../images/clients/netsnek_black.svg";
 
 // function CaseStudyForm() {
 //   const schema = z.object({
@@ -378,7 +379,7 @@ function CaseStudies() {
   console.log("caseStudies", caseStudies);
 
   return (
-    <Container className="mt-40">
+    <Container className="py-40">
       <FadeIn>
         <div className="flex justify-between">
           <h2 className="font-display text-2xl font-semibold text-neutral-950">
@@ -420,7 +421,9 @@ function CaseStudies() {
                     <div className="sm:flex sm:items-center sm:gap-x-6 lg:block">
                       <Field.Image
                         name="logo"
-                        className="h-16 w-16 flex-none rounded-full"
+                        objectFit="contain"
+                        objectPosition="left"
+                        className="h-16 w-auto flex-none rounded-full"
                         autoScale={false}
                       />
 
@@ -432,20 +435,20 @@ function CaseStudies() {
                       />
                     </div>
                     <div className="mt-1 flex gap-x-4 sm:mt-0 lg:block">
-                      <Field.Text
-                        name="service"
-                        className="text-sm tracking-tight text-neutral-950 after:ml-4 after:font-semibold after:text-neutral-300 after:content-['/'] lg:mt-2 lg:after:hidden"
-                        defaultValue="Web development"
-                      />
+                      <p className="text-sm tracking-tight text-neutral-950 after:ml-4 after:font-semibold after:text-neutral-300 after:content-['/'] lg:mt-2 lg:after:hidden">
+                        {caseStudy.jaenPageMetadata?.blogPost?.category}
+                      </p>
 
                       <p className="text-sm text-neutral-950 lg:mt-2">
-                        <Field.Text
-                          as="time"
-                          name="date"
-                          defaultValue={formatDate(
-                            new Date().toISOString().split("T")[0]
+                        <time
+                          dateTime={caseStudy.jaenPageMetadata?.blogPost?.date}
+                        >
+                          {formatDate(
+                            (
+                              caseStudy.jaenPageMetadata?.blogPost?.date || ""
+                            ).split("T")[0]
                           )}
-                        />
+                        </time>
                       </p>
                     </div>
                   </div>
@@ -454,26 +457,24 @@ function CaseStudies() {
                       <Link to={caseStudy.href}>{caseStudy.title}</Link>
                       
                     </p> */}
-                    <Field.Text
-                      as={status.isEditing ? undefined : Link}
-                      name="title"
+
+                    <Link
                       to={`/work/${caseStudy.slug}`}
                       className="font-display text-4xl font-medium text-neutral-950"
-                      defaultValue="New case study"
-                    />
+                    >
+                      {caseStudy.jaenPageMetadata?.title}
+                    </Link>
 
-                    <Field.Text
-                      name="summary"
-                      className="mt-6 space-y-6 text-base text-neutral-600"
-                      defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                    />
+                    <p className="mt-6 space-y-6 text-base text-neutral-600">
+                      {caseStudy.jaenPageMetadata?.description}
+                    </p>
 
                     <div className="mt-8 flex">
                       <Button
                         href={`/work/${caseStudy.slug}`}
-                        aria-label={`Read case study: ${caseStudy.jaenFields?.["IMA:TextField"]?.["client"]?.value}`}
+                        aria-label={`Lesen: ${caseStudy.jaenFields?.["IMA:TextField"]?.["client"]?.value}`}
                       >
-                        Read case study
+                        Lesen
                       </Button>
                     </div>
                     <BlockquoteWithoutImage className="mt-12" />
@@ -496,7 +497,7 @@ const clients = [
   ["Pharmaziegasse", pharmaziegasseLogo],
   ["Andenken Schenken", andenkenSchenkenLogo],
   ["City Pension", citypensionLogo],
-  ["North Adventures", "logoNorthAdventures"],
+  ["Netsnek", netsnekLogo],
 ];
 
 function Clients() {
@@ -511,13 +512,17 @@ function Clients() {
         <Border as={FadeIn} />
         <ul
           role="list"
-          className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4"
         >
           {clients.map(([client, logo]) => (
-            <li key={client} className="group flex">
+            <li key={client} className="group flex justify-center">
               <FadeIn className="overflow-hidden flex">
                 <Border className="flex pt-12 group-[&:nth-child(-n+2)]:-mt-px sm:group-[&:nth-child(3)]:-mt-px lg:group-[&:nth-child(4)]:-mt-px">
-                  <img src={logo} alt={client} className="object-contain" />
+                  <img
+                    src={logo}
+                    alt={client}
+                    className="object-contain w-full"
+                  />
                 </Border>
               </FadeIn>
             </li>

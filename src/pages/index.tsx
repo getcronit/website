@@ -17,6 +17,7 @@ import kanbonLogo from "../images/clients/kanbon.svg";
 import pharmaziegasseLogo from "../images/clients/pharmaziegasse.png";
 import andenkenSchenkenLogo from "../images/clients/andenken-schenken.png";
 import citypensionLogo from "../images/clients/citypension.png";
+import netsnekLogo from "../images/clients/netsnek.svg";
 import { Testimonial } from "@/components/Testimonial";
 
 const clients = [
@@ -27,7 +28,7 @@ const clients = [
   ["Pharmaziegasse", pharmaziegasseLogo],
   ["Andenken Schenken", andenkenSchenkenLogo],
   ["City Pension", citypensionLogo],
-  ["North Adventures", "logoNorthAdventures"],
+  ["Netsnek", netsnekLogo],
 ];
 
 function Clients() {
@@ -47,9 +48,13 @@ function Clients() {
             className="mt-10 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4"
           >
             {clients.map(([client, logo]) => (
-              <li key={client} className="flex">
+              <li key={client} className="flex justify-center">
                 <FadeIn className="flex">
-                  <img src={logo} alt={client} className="object-contain" />
+                  <img
+                    src={logo}
+                    alt={client}
+                    className="object-contain w-full"
+                  />
                 </FadeIn>
               </li>
             ))}
@@ -91,9 +96,10 @@ function CaseStudies() {
                     <Link to={`/work/${caseStudy.slug}`}>
                       <span className="absolute inset-0 rounded-3xl" />
                       <Field.Image
-                        objectFit="cover"
+                        objectFit="contain"
                         name="logo"
-                        className="h-16 w-16"
+                        objectPosition="left"
+                        className="h-16 w-auto"
                         autoScale={false}
                       />
                     </Link>
@@ -185,9 +191,9 @@ function Services() {
             </FadeIn>
           </div>
           <List className="mt-16 lg:mt-0 lg:w-1/2 lg:min-w-[33rem] lg:pl-4">
-            <ListItem title="UX-Konzeption">
-              Durch den Einsatz moderner UX-Methoden gestalten wir
-              benutzerfreundliche und intuitive Oberflächen.
+            <ListItem title="AI Assistants & Business Integration">
+              Wir entwickeln intelligente Assistenzsysteme und integrieren sie
+              in Ihre Geschäftsprozesse.
             </ListItem>
             <ListItem title="Web development">
               Wir kreieren moderne Websites und Webanwendungen, die exakt auf

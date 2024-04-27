@@ -4,6 +4,10 @@ import { Container } from "@/components/Container";
 import { FadeIn } from "@/components/FadeIn";
 import { Logo } from "@/components/Logo";
 import { socialMediaProfiles } from "@/components/SocialMedia";
+import { useJaenPageIndex, useNotificationsContext } from "@atsnek/jaen";
+import { useMemo } from "react";
+import { sq } from "gatsby-jaen-mailpress";
+import { NoSSR } from "./NoSSR";
 
 const navigation = [
   {
@@ -38,10 +42,45 @@ const navigation = [
 ];
 
 function Navigation() {
+  const workIndex = useJaenPageIndex({ jaenPageId: "JaenPage /work/" });
+
+  console.log("workIndex", workIndex);
+
+  const nav = useMemo(() => {
+    const referenceNav = workIndex.childPages.slice(0, 3).map((childPage) => {
+      return {
+        title: childPage.jaenPageMetadata?.title,
+        href: `/work/${childPage.slug}`,
+      };
+    });
+
+    console.log("referenceNav", referenceNav);
+
+    // prepand referenceNav to the first navigation item
+
+    return [
+      {
+        title: "Referenzen",
+        links: [
+          ...referenceNav,
+          {
+            title: (
+              <>
+                Mehr <span aria-hidden="true">&rarr;</span>
+              </>
+            ),
+            href: "/work",
+          },
+        ],
+      },
+      ...navigation.slice(1),
+    ];
+  }, [workIndex]);
+
   return (
     <nav>
       <ul role="list" className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-        {navigation.map((section) => (
+        {nav.map((section) => (
           <li key={section.title}>
             <div className="font-display text-sm font-semibold tracking-wider text-neutral-950">
               {section.title}
@@ -79,8 +118,43 @@ function ArrowIcon(props) {
 }
 
 function NewsletterForm() {
+  const notify = useNotificationsContext();
+
   return (
-    <form className="max-w-sm">
+    <form
+      className="max-w-sm"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const email = e.target[0].value;
+
+        const [_, errors] = await sq.mutate((m) =>
+          m.sendTemplateMail({
+            id: "68c4e3ec-92f6-4c16-b997-efd81c95d8ec",
+            values: {
+              email,
+            },
+          })
+        );
+
+        if (errors) {
+          notify.toast({
+            title: "Nachricht konnte nicht gesendet werden",
+            description: JSON.stringify(errors),
+            status: "error",
+          });
+
+          console.error(errors);
+
+          return;
+        }
+
+        notify.toast({
+          title: "Nachricht gesendet",
+          description: "Wir werden uns in Kürze bei Ihnen melden.",
+          status: "success",
+        });
+      }}
+    >
       <h2 className="font-display text-sm font-semibold tracking-wider text-neutral-950">
         Melden Sie sich für unseren Newsletter an
       </h2>
@@ -125,7 +199,7 @@ export function Footer() {
             <Logo className="h-8" fillOnHover />
           </Link>
           <p className="text-sm text-neutral-700">
-            © cronit KG {new Date().getFullYear()}
+            © cronit KG <NoSSR>{new Date().getFullYear()}</NoSSR>
           </p>
         </div>
       </FadeIn>

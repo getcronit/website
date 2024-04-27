@@ -32,20 +32,18 @@ const Page: React.FC<PageProps> = () => {
                   <Border className="pt-16">
                     <div className="relative lg:-mx-4 lg:flex lg:justify-end">
                       <div className="pt-10 lg:w-2/3 lg:flex-none lg:px-4 lg:pt-0">
-                        <Field.Text
-                          as="h2"
-                          name="title"
-                          className="font-display text-2xl font-semibold text-neutral-950"
-                          defaultValue="Article Title"
-                        />
+                        <h2 className="font-display text-2xl font-semibold text-neutral-950">
+                          {page.jaenPageMetadata?.title}
+                        </h2>
                         <dl className="lg:absolute lg:left-0 lg:top-0 lg:w-1/3 lg:px-4">
                           <dt className="sr-only">Published</dt>
-                          <Field.Text
-                            as="dd"
-                            name="date"
+
+                          <dd
                             className="absolute left-0 top-0 text-sm text-neutral-950 lg:static"
                             defaultValue={formatDate(
-                              new Date().toISOString().split("T")[0]
+                              (
+                                page.jaenPageMetadata?.blogPost?.date || ""
+                              ).split("T")[0]
                             )}
                           />
                           <dt className="sr-only">Author</dt>
@@ -57,27 +55,23 @@ const Page: React.FC<PageProps> = () => {
                                 autoScale={false}
                               />
                             </div>
-                            <div className="text-sm text-neutral-950">
-                              <Field.Text
-                                name="author.name"
-                                className="font-semibold"
-                                defaultValue="Author, CEO von Cronit"
-                              />
-                            </div>
+                            <p className="text-sm text-neutral-950 font-semibold content-center">
+                              {page.jaenPageMetadata?.blogPost?.author ||
+                                "Author Name"}
+                            </p>
                           </dd>
                         </dl>
-                        <Field.Text
-                          name="description"
-                          className="mt-6 max-w-2xl text-base text-neutral-600"
-                          defaultValue="Article Description"
-                        />
+
+                        <p className="mt-6 max-w-2xl text-base text-neutral-600">
+                          {page.jaenPageMetadata?.description}
+                        </p>
 
                         <Button
                           href={`/blog/${page.slug}`}
                           aria-label={`Read more: ${page.jaenPageMetadata?.title}`}
                           className="mt-8"
                         >
-                          Mehr lesen
+                          Lesen
                         </Button>
                       </div>
                     </div>

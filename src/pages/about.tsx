@@ -7,7 +7,7 @@ import { PageIntro } from "@/components/PageIntro";
 import { PageLinks } from "@/components/PageLinks";
 import { SectionIntro } from "@/components/SectionIntro";
 import { StatList, StatListItem } from "@/components/StatList";
-import { PageConfig, PageProps } from "@atsnek/jaen";
+import { PageConfig, PageProps, useJaenPageIndex } from "@atsnek/jaen";
 
 function Culture() {
   return (
@@ -43,14 +43,23 @@ function Culture() {
   );
 }
 
+import imageNicoSchett from "../images/team/ns.png";
+import norbertTesch from "../images/team/blake-reid.jpeg";
+import corinaWiedenhofer from "../images/team/corina.jpg";
+import florianKleber from "../images/team/florian.webp";
+import sabineSulzer from "../images/team/michael-foster.jpeg";
+import janEmig from "../images/team/jan.png";
+import simonPrast from "../images/team/simon.webp";
+import christianAichner from "../images/team/christian.webp";
+
 const team = [
   {
     title: "Geschäftsführung",
     people: [
       {
         name: "Nico Schett",
-        role: "Founder / CEO",
-        image: { src: "imageLeslieAlexander" },
+        role: "Geschäftsführer",
+        image: { src: imageNicoSchett },
       },
     ],
   },
@@ -60,37 +69,37 @@ const team = [
       {
         name: "Norbert Tesch",
         role: "Lead-Entwickler",
-        image: { src: "imageLeslieAlexander" },
+        image: { src: norbertTesch },
       },
       {
         name: "Corina Wiedenhofer",
         role: "Executive-Assistent",
-        image: { src: "imageChelseaHagon" },
+        image: { src: corinaWiedenhofer },
       },
       {
         name: "Florian Kleber",
         role: "Backend-Entwickler",
-        image: { src: "imageChelseaHagon" },
+        image: { src: florianKleber },
       },
       {
         name: "Sabine Sulzer",
         role: "Recruiting & Personalmarketing",
-        image: { src: "imageKathrynMurphy" },
+        image: { src: sabineSulzer },
       },
       {
         name: "Jan Emig",
         role: "Frontend-Entwickler",
-        image: { src: "imageEmmaDorsey" },
+        image: { src: janEmig },
       },
       {
         name: "Simon Prast",
-        role: "Vertrieb",
-        image: { src: "imageLeonardKrasner" },
+        role: "Backend-Entwickler",
+        image: { src: simonPrast },
       },
       {
         name: "Christian Aichner",
         role: "Frontend-Entwickler",
-        image: { src: "imageBlakeReid" },
+        image: { src: christianAichner },
       },
     ],
   },
@@ -146,6 +155,8 @@ function Team() {
 }
 
 const Page: React.FC<PageProps> = () => {
+  const blog = useJaenPageIndex({ jaenPageId: "JaenPage /blog/" });
+
   return (
     <>
       <PageIntro eyebrow="Über uns" title="Our strength is collaboration">
@@ -187,7 +198,12 @@ const Page: React.FC<PageProps> = () => {
         className="mt-24 sm:mt-32 lg:mt-40"
         title="Aus unserem Blog"
         intro="Unser Team erfahrener Designer und Entwickler hat nur eines im Sinn: an Ihren Ideen zu arbeiten, um ein Lächeln auf das Gesicht Ihrer Benutzer weltweit zu zaubern. Lesen Sie mehr über unsere Projekte und erfahren Sie, wie wir die digitale Welt verändern."
-        pages={[]}
+        pages={blog.childPages.map((page) => ({
+          title: page.jaenPageMetadata?.title,
+          date: page.jaenPageMetadata?.blogPost?.date || "",
+          description: page.jaenPageMetadata?.description,
+          href: `/blog/${page.slug}`,
+        }))}
       />
 
       <ContactSection />

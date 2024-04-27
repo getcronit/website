@@ -1,5 +1,5 @@
 {
-  "name": "mailpress",
+  "name": "cronit.io",
   "version": "1.0.0",
   "private": true,
   "description": "mailpress",
@@ -16,8 +16,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.62",
-    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.4",
+    "@atsnek/jaen": "^1.0.0-rc.73",
+    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.18",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -29,8 +29,8 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "gatsby": "^5.13.3",
-    "gatsby-jaen-mailpress": "^0.0.4",
-    "gatsby-plugin-jaen": "^1.0.0-rc.86",
+    "gatsby-jaen-mailpress": "^0.0.6",
+    "gatsby-plugin-jaen": "^1.0.0-rc.96",
     "lucide-react": "^0.359.0",
     "postcss-focus-visible": "^9.0.1",
     "react": "^18.2.0",
@@ -40,12 +40,14 @@
     "snek-query": "^0.0.110",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "validator": "^13.11.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "@types/validator": "^13.11.9",
     "autoprefixer": "^10.4.16",
     "gatsby-plugin-postcss": "^6.13.0",
     "postcss": "^8.4.33",

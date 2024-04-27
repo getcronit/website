@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { Container } from "@/components/Container";
 import { FadeIn } from "@/components/FadeIn";
 import { Field } from "@atsnek/jaen";
+import { cn } from "@/lib/utils";
 
 export function PageIntro({ eyebrow, title, children, centered = false }) {
   return (
@@ -15,15 +16,14 @@ export function PageIntro({ eyebrow, title, children, centered = false }) {
             {eyebrow}
           </span>
           <span className="sr-only"> - </span>
-          <Field.Text
-            as="span"
-            name="title"
-            defaultValue={title}
-            className={clsx(
+          <span
+            className={cn(
               "mt-6 block max-w-5xl font-display text-5xl font-medium tracking-tight text-neutral-950 [text-wrap:balance] sm:text-6xl",
               centered && "mx-auto"
             )}
-          />
+          >
+            {title}
+          </span>
         </h1>
         <div
           className={clsx(
