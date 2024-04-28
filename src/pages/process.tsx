@@ -13,6 +13,7 @@ import { TagList, TagListItem } from "@/components/TagList";
 import imageLaptop from "../images/laptop.jpg";
 import imageMeeting from "../images/meeting.jpg";
 import imageWhiteboard from "../images/whiteboard.jpg";
+import { graphql } from "gatsby";
 
 function Section({ title, image, children }) {
   return (
@@ -261,3 +262,19 @@ export default Page;
 export const pageConfig: PageConfig = {
   label: "Contact",
 };
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage {
+      nodes {
+        ...JaenPageData
+        children {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
+
+export { Head } from "@atsnek/jaen";

@@ -5,7 +5,7 @@ import { List, ListItem } from "@/components/List";
 import { SectionIntro } from "@/components/SectionIntro";
 import { StylizedImage } from "@/components/StylizedImage";
 import { Field, PageProps, useJaenPageIndex } from "@atsnek/jaen";
-import { Link } from "gatsby";
+import { Link, graphql } from "gatsby";
 import React from "react";
 
 import servicesSvg from "../images/services.svg";
@@ -260,3 +260,19 @@ const IndexPage: React.FC<PageProps> = () => {
 };
 
 export default IndexPage;
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage {
+      nodes {
+        ...JaenPageData
+        children {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
+
+export { Head } from "@atsnek/jaen";

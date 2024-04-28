@@ -51,6 +51,7 @@ import sabineSulzer from "../images/team/michael-foster.jpeg";
 import janEmig from "../images/team/jan.png";
 import simonPrast from "../images/team/simon.webp";
 import christianAichner from "../images/team/christian.webp";
+import { graphql } from "gatsby";
 
 const team = [
   {
@@ -216,3 +217,19 @@ export default Page;
 export const pageConfig: PageConfig = {
   label: "Über uns",
 };
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage {
+      nodes {
+        ...JaenPageData
+        children {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
+
+export { Head } from "@atsnek/jaen";

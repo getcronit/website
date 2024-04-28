@@ -12,7 +12,7 @@ import {
   useNotificationsContext,
 } from "@atsnek/jaen";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "gatsby";
+import { Link, graphql } from "gatsby";
 import { forwardRef, useEffect, useId } from "react";
 import {
   Form,
@@ -355,3 +355,19 @@ export default Page;
 export const pageConfig: PageConfig = {
   label: "Contact",
 };
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage {
+      nodes {
+        ...JaenPageData
+        children {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
+
+export { Head } from "@atsnek/jaen";
