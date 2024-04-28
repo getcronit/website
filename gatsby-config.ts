@@ -6,7 +6,7 @@ const config: GatsbyConfig = {
       resolve: `gatsby-plugin-jaen`,
       options: {
         remote: {
-          repository: "cronitio/cronit.io",
+          repository: "getcronit/cronit.io",
         },
         zitadel: {
           organizationId: "252746033782587395",
@@ -21,7 +21,7 @@ const config: GatsbyConfig = {
           dsn: "https://bd955e9e6b6ae7d38e1dccdd04afc51d@sentry.cronit.io/2",
         },
         googleAnalytics: {
-          trackingIds: ["G-M58K75M9PG"],
+          // trackingIds: ["G-M58K75M9PG"],
         },
       },
     },
