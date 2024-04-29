@@ -17,6 +17,7 @@ import { GridPattern } from "@/components/GridPattern";
 import { Logo, Logomark } from "@/components/Logo";
 import { Offices } from "@/components/Offices";
 import { SocialMedia } from "@/components/SocialMedia";
+import { NoSSR } from "./NoSSR";
 
 const RootLayoutContext = createContext({});
 
@@ -68,6 +69,13 @@ function Header({
           />
         </Link>
         <div className="flex items-center gap-x-8">
+          <a href="tel:+4319929912" className="hidden sm:block text-sm">
+            Sales:{" "}
+            <NoSSR>
+              <span>+43 1 9929912</span>
+            </NoSSR>
+          </a>
+
           <Button href="/contact" invert={invert}>
             Kontaktiere uns
           </Button>
