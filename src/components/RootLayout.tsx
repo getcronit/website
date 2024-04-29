@@ -18,6 +18,7 @@ import { Logo, Logomark } from "@/components/Logo";
 import { Offices } from "@/components/Offices";
 import { SocialMedia } from "@/components/SocialMedia";
 import { NoSSR } from "./NoSSR";
+import { cn } from "@/lib/utils";
 
 const RootLayoutContext = createContext({});
 
@@ -65,7 +66,13 @@ function Header({
           />
         </Link>
         <div className="flex items-center gap-x-8">
-          <a href="tel:+4319929912" className="hidden sm:block text-sm">
+          <a
+            href="tel:+4319929912"
+            className={cn("hidden sm:block text-sm", {
+              "text-white": invert,
+              "text-neutral-950": !invert,
+            })}
+          >
             Sales:{" "}
             <NoSSR>
               <span>+43 1 9929912</span>
