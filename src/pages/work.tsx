@@ -426,8 +426,8 @@ function CaseStudies() {
                         name="logo"
                         objectFit="contain"
                         objectPosition="left"
-                        className="h-16 w-auto flex-none rounded-full"
-                        autoScale={false}
+                        className="!h-16 w-auto flex-none rounded-full"
+                        autoScale={true}
                       />
 
                       <Field.Text

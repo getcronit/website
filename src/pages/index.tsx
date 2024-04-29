@@ -99,8 +99,8 @@ function CaseStudies() {
                         objectFit="contain"
                         name="logo"
                         objectPosition="left"
-                        className="h-16 w-auto"
-                        autoScale={false}
+                        className="!h-16 w-auto"
+                        autoScale={true}
                       />
                     </Link>
                   </h3>
