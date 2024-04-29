@@ -261,17 +261,6 @@ function ContactForm() {
           <Button type="submit" className="mt-10">
             Let’s work together
           </Button>
-
-          <Button
-            type="reset"
-            className="mt-4"
-            onClick={() => {
-              alert("reset");
-              form.reset();
-            }}
-          >
-            Reset
-          </Button>
         </form>
       </Form>
     </FadeIn>
