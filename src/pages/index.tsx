@@ -90,43 +90,42 @@ function CaseStudies() {
           {caseStudies.childPages.map((caseStudy) =>
             caseStudies.withJaenPage(
               caseStudy.id,
-              <Field.Image name="logo" className="h-16 w-auto" />
-              // <FadeIn key={caseStudy.id} className="flex">
-              //   <article className="relative flex w-full flex-col rounded-3xl p-6 ring-1 ring-neutral-950/5 transition hover:bg-neutral-50 sm:p-8">
-              //     <h3>
-              //       <Link to={`/work/${caseStudy.slug}`}>
-              //         <span className="absolute inset-0 rounded-3xl" />
-              //         <Field.Image
-              //           objectFit="contain"
-              //           name="logo"
-              //           objectPosition="left"
-              //           className="h-16 w-auto"
-              //           autoScale={false}
-              //         />
-              //       </Link>
-              //     </h3>
-              //     <p className="mt-6 flex gap-x-2 text-sm text-neutral-950">
-              //       <Field.Text
-              //         as={"time"}
-              //         name="date"
-              //         className="font-semibold"
-              //       />
-              //       <span className="text-neutral-300" aria-hidden="true">
-              //         /
-              //       </span>
-              //       <span>Case study</span>
-              //     </p>
+              <FadeIn key={caseStudy.id} className="flex">
+                <article className="relative flex w-full flex-col rounded-3xl p-6 ring-1 ring-neutral-950/5 transition hover:bg-neutral-50 sm:p-8">
+                  <h3>
+                    <Link to={`/work/${caseStudy.slug}`}>
+                      <span className="absolute inset-0 rounded-3xl" />
+                      <Field.Image
+                        objectFit="contain"
+                        name="logo"
+                        objectPosition="left"
+                        className="h-16 w-auto"
+                        autoScale={false}
+                      />
+                    </Link>
+                  </h3>
+                  <p className="mt-6 flex gap-x-2 text-sm text-neutral-950">
+                    <Field.Text
+                      as={"time"}
+                      name="date"
+                      className="font-semibold"
+                    />
+                    <span className="text-neutral-300" aria-hidden="true">
+                      /
+                    </span>
+                    <span>Case study</span>
+                  </p>
 
-              //     <Field.Text
-              //       name="title"
-              //       className="mt-6 font-display text-2xl font-semibold text-neutral-950"
-              //     />
-              //     <Field.Text
-              //       name="description"
-              //       className="mt-4 text-base text-neutral-600"
-              //     />
-              //   </article>
-              // </FadeIn>
+                  <Field.Text
+                    name="title"
+                    className="mt-6 font-display text-2xl font-semibold text-neutral-950"
+                  />
+                  <Field.Text
+                    name="description"
+                    className="mt-4 text-base text-neutral-600"
+                  />
+                </article>
+              </FadeIn>
             )
           )}
 
