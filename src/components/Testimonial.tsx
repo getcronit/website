@@ -37,8 +37,9 @@ export function Testimonial({
               <Field.Image
                 name={`${id}-image`}
                 objectFit="contain"
-                className="mx-auto h-32"
-                autoScale={false}
+                style={{ width: "100%" }}
+                className="mx-auto !h-32"
+                autoScale={true}
               />
             </figcaption>
           </figure>

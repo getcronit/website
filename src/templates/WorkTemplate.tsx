@@ -21,6 +21,7 @@ import { TagList, TagListItem } from "@/components/TagList";
 import { MdxField } from "@atsnek/jaen-fields-mdx";
 import { formatDate } from "@/lib/utils";
 import { useEffect, useMemo } from "react";
+import { graphql } from "gatsby";
 
 const Page: React.FC<PageProps> = withRedux(() => {
   const page = usePage({});
@@ -130,3 +131,19 @@ export default Page;
 export const pageConfig: PageConfig = {
   label: "Work",
 };
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage(filter: { id: { eq: "JaenPage /work/" } }) {
+      nodes {
+        ...JaenPageData
+        childPages {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
+
+export { Head } from "@atsnek/jaen";

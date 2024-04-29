@@ -152,11 +152,16 @@ export const pageConfig: PageConfig = {
 
 export const query = graphql`
   query ($jaenPageId: String!) {
-    ...JaenPageQuery
-    allJaenPage {
+    jaenPage(id: { eq: $jaenPageId }) {
+      ...JaenPageData
+      childPages {
+        ...JaenPageData
+      }
+    }
+    allJaenPage(filter: { parentPage: { id: { eq: "JaenPage /blog/" } } }) {
       nodes {
         ...JaenPageData
-        children {
+        childPages {
           ...JaenPageData
         }
       }

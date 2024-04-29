@@ -372,7 +372,9 @@ function CaseStudies() {
 
   console.log("page", page);
 
-  const caseStudies = useJaenPageIndex();
+  const caseStudies = useJaenPageIndex({
+    jaenPageId: "JaenPage /work/",
+  });
 
   const status = useContentManagement();
 
@@ -414,74 +416,75 @@ function CaseStudies() {
         {caseStudies.childPages.map((caseStudy) =>
           caseStudies.withJaenPage(
             caseStudy.id,
-            <FadeIn key={caseStudy.client}>
-              <article>
-                <Border className="grid grid-cols-3 gap-x-8 gap-y-8 pt-16">
-                  <div className="col-span-full sm:flex sm:items-center sm:justify-between sm:gap-x-8 lg:col-span-1 lg:block">
-                    <div className="sm:flex sm:items-center sm:gap-x-6 lg:block">
-                      <Field.Image
-                        name="logo"
-                        objectFit="contain"
-                        objectPosition="left"
-                        className="h-16 w-auto flex-none rounded-full"
-                        autoScale={false}
-                      />
+            <Field.Image name="logo" />
+            // <FadeIn key={caseStudy.client}>
+            //   <article>
+            //     <Border className="grid grid-cols-3 gap-x-8 gap-y-8 pt-16">
+            //       <div className="col-span-full sm:flex sm:items-center sm:justify-between sm:gap-x-8 lg:col-span-1 lg:block">
+            //         <div className="sm:flex sm:items-center sm:gap-x-6 lg:block">
+            //           <Field.Image
+            //             name="logo"
+            //             objectFit="contain"
+            //             objectPosition="left"
+            //             className="h-16 w-auto flex-none rounded-full"
+            //             autoScale={false}
+            //           />
 
-                      <Field.Text
-                        as="h3"
-                        name="client"
-                        className="mt-6 text-sm font-semibold text-neutral-950 sm:mt-0 lg:mt-8"
-                        defaultValue="Phobia"
-                      />
-                    </div>
-                    <div className="mt-1 flex gap-x-4 sm:mt-0 lg:block">
-                      <p className="text-sm tracking-tight text-neutral-950 after:ml-4 after:font-semibold after:text-neutral-300 after:content-['/'] lg:mt-2 lg:after:hidden">
-                        {caseStudy.jaenPageMetadata?.blogPost?.category}
-                      </p>
+            //           <Field.Text
+            //             as="h3"
+            //             name="client"
+            //             className="mt-6 text-sm font-semibold text-neutral-950 sm:mt-0 lg:mt-8"
+            //             defaultValue="Phobia"
+            //           />
+            //         </div>
+            //         <div className="mt-1 flex gap-x-4 sm:mt-0 lg:block">
+            //           <p className="text-sm tracking-tight text-neutral-950 after:ml-4 after:font-semibold after:text-neutral-300 after:content-['/'] lg:mt-2 lg:after:hidden">
+            //             {caseStudy.jaenPageMetadata?.blogPost?.category}
+            //           </p>
 
-                      <p className="text-sm text-neutral-950 lg:mt-2">
-                        <time
-                          dateTime={caseStudy.jaenPageMetadata?.blogPost?.date}
-                        >
-                          {formatDate(
-                            (
-                              caseStudy.jaenPageMetadata?.blogPost?.date || ""
-                            ).split("T")[0]
-                          )}
-                        </time>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col-span-full lg:col-span-2 lg:max-w-2xl">
-                    {/* <p className="font-display text-4xl font-medium text-neutral-950">
-                      <Link to={caseStudy.href}>{caseStudy.title}</Link>
-                      
-                    </p> */}
+            //           <p className="text-sm text-neutral-950 lg:mt-2">
+            //             <time
+            //               dateTime={caseStudy.jaenPageMetadata?.blogPost?.date}
+            //             >
+            //               {formatDate(
+            //                 (
+            //                   caseStudy.jaenPageMetadata?.blogPost?.date || ""
+            //                 ).split("T")[0]
+            //               )}
+            //             </time>
+            //           </p>
+            //         </div>
+            //       </div>
+            //       <div className="col-span-full lg:col-span-2 lg:max-w-2xl">
+            //         {/* <p className="font-display text-4xl font-medium text-neutral-950">
+            //           <Link to={caseStudy.href}>{caseStudy.title}</Link>
 
-                    <Link
-                      to={`/work/${caseStudy.slug}`}
-                      className="font-display text-4xl font-medium text-neutral-950"
-                    >
-                      {caseStudy.jaenPageMetadata?.title}
-                    </Link>
+            //         </p> */}
 
-                    <p className="mt-6 space-y-6 text-base text-neutral-600">
-                      {caseStudy.jaenPageMetadata?.description}
-                    </p>
+            //         <Link
+            //           to={`/work/${caseStudy.slug}`}
+            //           className="font-display text-4xl font-medium text-neutral-950"
+            //         >
+            //           {caseStudy.jaenPageMetadata?.title}
+            //         </Link>
 
-                    <div className="mt-8 flex">
-                      <Button
-                        href={`/work/${caseStudy.slug}`}
-                        aria-label={`Lesen: ${caseStudy.jaenFields?.["IMA:TextField"]?.["client"]?.value}`}
-                      >
-                        Lesen
-                      </Button>
-                    </div>
-                    <BlockquoteWithoutImage className="mt-12" />
-                  </div>
-                </Border>
-              </article>
-            </FadeIn>
+            //         <p className="mt-6 space-y-6 text-base text-neutral-600">
+            //           {caseStudy.jaenPageMetadata?.description}
+            //         </p>
+
+            //         <div className="mt-8 flex">
+            //           <Button
+            //             href={`/work/${caseStudy.slug}`}
+            //             aria-label={`Lesen: ${caseStudy.jaenFields?.["IMA:TextField"]?.["client"]?.value}`}
+            //           >
+            //             Lesen
+            //           </Button>
+            //         </div>
+            //         <BlockquoteWithoutImage className="mt-12" />
+            //       </div>
+            //     </Border>
+            //   </article>
+            // </FadeIn>
           )
         )}
       </div>
@@ -572,13 +575,10 @@ export const pageConfig: PageConfig = {
 
 export const query = graphql`
   query ($jaenPageId: String!) {
-    ...JaenPageQuery
-    allJaenPage {
-      nodes {
+    jaenPage(id: { eq: $jaenPageId }) {
+      ...JaenPageData
+      childPages {
         ...JaenPageData
-        children {
-          ...JaenPageData
-        }
       }
     }
   }

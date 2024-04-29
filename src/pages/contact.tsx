@@ -359,14 +359,6 @@ export const pageConfig: PageConfig = {
 export const query = graphql`
   query ($jaenPageId: String!) {
     ...JaenPageQuery
-    allJaenPage {
-      nodes {
-        ...JaenPageData
-        children {
-          ...JaenPageData
-        }
-      }
-    }
   }
 `;
 
