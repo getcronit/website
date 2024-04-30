@@ -12,7 +12,10 @@ const config: GatsbyConfig = {
           organizationId: "252746033782587395",
           clientId: "252746210698395651@services",
           authority: "https://accounts.cronit.io",
-          redirectUri: "http://localhost:8000",
+          redirectUri:
+            process.env.NODE_ENV === "production"
+              ? "https://cronit.io"
+              : "http://localhost:8000",
           projectIds: ["252765861113233411", "252899191242620931"],
         },
         sentry: {
