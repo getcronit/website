@@ -16,7 +16,11 @@ const config: GatsbyConfig = {
             process.env.NODE_ENV === "production"
               ? "https://cronit.io"
               : "http://localhost:8000",
-          projectIds: ["252765861113233411", "252899191242620931"],
+          projectIds: [
+            "252765861113233411",
+            "252899191242620931",
+            "260237544631828483",
+          ],
         },
         sentry: {
           org: "cronit",
