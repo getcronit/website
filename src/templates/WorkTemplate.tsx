@@ -373,14 +373,19 @@ const Page: React.FC<PageProps> = withCMSManagement(() => {
   const page = usePage({});
   const manager = useCMSManagementContext();
 
-  console.log("apge", page);
-
   const index = useJaenPageIndex({ jaenPageId: "JaenPage /work/" });
 
   const moreCaseStudies = useMemo(() => {
-    return index.childPages
+    const currentIndex = index.childPages.findIndex(
+      (childPage) => childPage.id === page.id
+    );
+    const nextPages = [
+      ...index.childPages.slice(currentIndex + 1),
+      ...index.childPages.slice(0, currentIndex),
+    ]; // Reorder the array to start from the current page's position
+    return nextPages
       .filter((childPage) => childPage.id !== page.id)
-      .slice(0, 2)
+      .slice(0, 2) // Take the next two pages
       .map((childPage) => {
         return {
           title: childPage.jaenPageMetadata?.title,
@@ -389,7 +394,7 @@ const Page: React.FC<PageProps> = withCMSManagement(() => {
           href: `/work/${childPage.slug}`,
         };
       });
-  }, [index]);
+  }, [index, page.id]);
 
   const clientField = useField<string>("client", "IMA:TextField");
   const clientValue = clientField.value || clientField.staticValue || "";

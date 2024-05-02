@@ -18,9 +18,18 @@ const Page: React.FC<PageProps> = () => {
   const index = useJaenPageIndex({ jaenPageId: "JaenPage /blog/" });
 
   const moreBlogs = useMemo(() => {
-    return index.childPages
+    const currentIndex = index.childPages.findIndex(
+      (childPage) => childPage.id === page.id
+    );
+
+    const nextPages = [
+      ...index.childPages.slice(currentIndex + 1),
+      ...index.childPages.slice(0, currentIndex),
+    ]; // Reorder the array to start from the current page's position
+
+    return nextPages
       .filter((childPage) => childPage.id !== page.id)
-      .slice(0, 2)
+      .slice(0, 2) // Take the next two pages
       .map((childPage) => {
         return {
           title: childPage.jaenPageMetadata?.title,
@@ -29,7 +38,7 @@ const Page: React.FC<PageProps> = () => {
           href: `/blog/${childPage.slug}`,
         };
       });
-  }, [index]);
+  }, [index, page.id]);
 
   const date = page.jaenPageMetadata?.blogPost?.date || "";
 
