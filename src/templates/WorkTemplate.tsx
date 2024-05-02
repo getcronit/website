@@ -56,6 +56,14 @@ import { sq } from "@/pylons/website";
 import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 import { withCMSManagement } from "gatsby-plugin-jaen/src/connectors/cms-management";
 
+import {
+  IMediaRecorder,
+  MediaRecorder,
+  register,
+  deregister,
+} from "extendable-media-recorder";
+import { connect } from "extendable-media-recorder-wav-encoder";
+
 const FormSchema = z.object({
   industry: z.string(),
   input: z.string(),
@@ -85,9 +93,27 @@ interface AudioRecorderProps {
 
 const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<IMediaRecorder>(null);
 
   const [webSocket, setWebSocket] = useState<WebSocket>(null);
+
+  useEffect(() => {
+    let port: MessagePort;
+
+    const init = async () => {
+      port = await connect();
+      await register(port);
+    };
+
+    init();
+
+    return () => {
+      // Close WebSocket connection when component unmounts
+      if (port) {
+        deregister(port);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const oidcStorage = sessionStorage.getItem(
@@ -104,6 +130,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
 
     const ws = new WebSocket(
       `wss://website-pylon.cronit.io/transcribe?token=${token}`
+      // `ws://localhost:3000/transcribe?token=${token}`
     );
 
     setWebSocket(ws);
@@ -124,19 +151,18 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(stream, { mimeType: "audio/wav" });
 
       recorder.ondataavailable = (e) => {
-        console.log("data", e);
-
-        const audioBlob = new Blob([e.data], { type: "audio/wav" });
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-          webSocket.send(audioBlob);
+          webSocket.send(e.data);
         }
       };
 
       recorder.onstop = () => {
         setIsRecording(false);
+
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       recorder.start();
@@ -149,14 +175,9 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     if (mediaRecorder && mediaRecorder.state === "recording") {
       mediaRecorder.stop();
-
-      // Stop the MediaStreamTrack
-      const stream = mediaRecorder.stream;
-      const tracks = stream.getTracks();
-      tracks.forEach((track) => track.stop());
     }
   };
 
@@ -273,10 +294,10 @@ const GeneratorForm: React.FC<GeneratorFormProps> = (props) => {
               <FormLabel>Beschreibung</FormLabel>
               <AudioRecorder
                 onData={(data) => {
-                  form.setValue(
-                    "input",
-                    form.getValues()["input"] || "" + `\n${data}`
-                  );
+                  const current = form.getValues()["input"] || "";
+                  const newValue = current ? `${current}\n${data}` : data;
+
+                  form.setValue("input", newValue);
                 }}
                 onRecord={(isRecording) => setIsRecording(isRecording)}
               />
