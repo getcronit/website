@@ -84,7 +84,7 @@ const team = [
       },
       {
         name: "Sabine Sulzer",
-        role: "Recruiting & Personalmarketing",
+        role: "HR",
         image: { src: sabineSulzer },
       },
       {
