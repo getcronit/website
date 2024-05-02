@@ -448,8 +448,8 @@ const Page: React.FC<PageProps> = withCMSManagement(() => {
             </div>
 
             <div className="border-y border-neutral-200 bg-neutral-100">
-              <div className="-my-px mx-auto max-w-[76rem] bg-neutral-200">
-                <GrayscaleTransitionImage />
+              <div className="-my-px mx-auto max-w-[76rem] py-24 bg-gradient-to-r from-cyan-500 to-blue-500">
+                <GrayscaleTransitionImage className="w-full aspect-[16/10]" />
               </div>
             </div>
           </FadeIn>

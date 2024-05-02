@@ -4,31 +4,40 @@ import {
   useMotionTemplate,
   useScroll,
   useTransform,
+  useMotionValueEvent,
+  useMotionValue,
 } from "framer-motion";
 import { Field } from "@atsnek/jaen";
+import { cn } from "@/lib/utils";
 
-const MotionImage = motion("img");
+const MI = motion.img;
 
 export function GrayscaleTransitionImage(props) {
-  let ref = useRef<HTMLDivElement>();
-  let { scrollYProgress } = useScroll({
+  let ref = useRef<HTMLDivElement>(null);
+  let { scrollYProgress, scrollY } = useScroll({
     target: ref,
     offset: ["start 65%", "end 35%"],
   });
+
+  const value = useMotionValue(scrollYProgress);
+
   let grayscale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0, 1]);
   let filter = useMotionTemplate`grayscale(${grayscale})`;
 
   return (
     <div ref={ref} className="group relative">
-      <Field.Image
-        name="GrayscaleTransitionImage"
-        className="w-full aspect-[16/10] object-cover grayscale hover:filter-none transition-all duration-300"
-      />
-      {/* <MotionImage alt="" style={{ filter }} {...props} /> */}
+      <motion.div style={{ filter: filter }} {...props}>
+        <Field.Image name="GrayscaleTransitionImage" objectFit="contain" />
+      </motion.div>
       <div
-        className="pointer-events-none absolute left-0 top-0 w-full opacity-0 transition duration-300 group-hover:opacity-100 bg-red-600"
+        className={cn(
+          props.className,
+          "pointer-events-none absolute left-0 top-0 w-full opacity-0 transition duration-300 group-hover:opacity-100"
+        )}
         aria-hidden="true"
-      ></div>
+      >
+        <Field.Image name="GrayscaleTransitionImage" objectFit="contain" />
+      </div>
     </div>
   );
 }
