@@ -11,37 +11,22 @@ import {
   PageProps,
   useAuth,
   useCMSManagementContext,
-  useContentManagement,
   useField,
   useJaenPageIndex,
   usePage,
-  withRedux,
 } from "@atsnek/jaen";
 
 import { MagicWandIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { fromMarkdown } from "mdast-util-from-markdown";
-import { FaMicrophone } from "@react-icons/all-files/fa/FaMicrophone";
-import { FaStopCircle } from "@react-icons/all-files/fa/FaStopCircle";
-import { User } from "oidc-client-ts";
 
-import ballonsSvg from "../images/ballons-ballons.svg";
-import { Blockquote, BlockquoteWithImage } from "@/components/Blockquote";
 import { StatList, StatListItem } from "@/components/StatList";
 import { TagList, TagListItem } from "@/components/TagList";
-import { MdxField } from "@atsnek/jaen-fields-mdx";
-import { cn, formatDate } from "@/lib/utils";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { graphql } from "gatsby";
+import { Button } from "@/components/ui/button";
 import {
   Collapsible,
-  CollapsibleTrigger,
   CollapsibleContent,
+  CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { boolean, z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -50,19 +35,19 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { sq } from "@/pylons/website";
+import { MdxField } from "@atsnek/jaen-fields-mdx";
 import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { graphql } from "gatsby";
 import { withCMSManagement } from "gatsby-plugin-jaen/src/connectors/cms-management";
-
-import {
-  IMediaRecorder,
-  MediaRecorder,
-  register,
-  deregister,
-} from "extendable-media-recorder";
-import { connect } from "extendable-media-recorder-wav-encoder";
+import React, { useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const FormSchema = z.object({
   industry: z.string(),
@@ -86,123 +71,7 @@ interface GeneratorFormProps {
   }) => void;
 }
 
-interface AudioRecorderProps {
-  onRecord: (isRecording: boolean) => void;
-  onData: (text: string) => void;
-}
-
-const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<IMediaRecorder>(null);
-
-  const [webSocket, setWebSocket] = useState<WebSocket>(null);
-
-  useEffect(() => {
-    let port: MessagePort;
-
-    const init = async () => {
-      port = await connect();
-      await register(port);
-    };
-
-    init();
-
-    return () => {
-      // Close WebSocket connection when component unmounts
-      if (port) {
-        deregister(port);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const oidcStorage = sessionStorage.getItem(
-      `oidc.user:${__JAEN_ZITADEL__.authority}:${__JAEN_ZITADEL__.clientId}`
-    );
-
-    let token: string = "";
-
-    if (oidcStorage) {
-      const user = User.fromStorageString(oidcStorage);
-
-      token = user.access_token;
-    }
-
-    const ws = new WebSocket(
-      `wss://website-pylon.cronit.io/transcribe?token=${token}`
-      // `ws://localhost:3000/transcribe?token=${token}`
-    );
-
-    setWebSocket(ws);
-
-    ws.onmessage = (ev) => {
-      props.onData(ev.data);
-      props.onRecord(false);
-    };
-
-    return () => {
-      // Close WebSocket connection when component unmounts
-      if (ws) {
-        ws.close();
-      }
-    };
-  }, []); // Empty dependency array ensures the effect runs only once on mount
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: "audio/wav" });
-
-      recorder.ondataavailable = (e) => {
-        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-          webSocket.send(e.data);
-        }
-      };
-
-      recorder.onstop = () => {
-        setIsRecording(false);
-
-        stream.getTracks().forEach((track) => track.stop());
-      };
-
-      recorder.start();
-      setIsRecording(true);
-      setMediaRecorder(recorder);
-
-      props.onRecord(true);
-    } catch (error) {
-      console.error("Error starting recording:", error);
-    }
-  };
-
-  const stopRecording = async () => {
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
-    }
-  };
-
-  return (
-    <div>
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        onClick={isRecording ? stopRecording : startRecording}
-      >
-        <FaMicrophone
-          className={cn("h-4 w-4", {
-            hidden: isRecording,
-          })}
-        />
-        <FaStopCircle
-          className={cn("h-4 w-4 animate-pulse", {
-            hidden: !isRecording,
-          })}
-        />
-      </Button>
-    </div>
-  );
-};
+const AudioRecorder = React.lazy(() => import("@/components/AudioRecorder"));
 
 const GeneratorForm: React.FC<GeneratorFormProps> = (props) => {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -292,15 +161,19 @@ const GeneratorForm: React.FC<GeneratorFormProps> = (props) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Beschreibung</FormLabel>
-              <AudioRecorder
-                onData={(data) => {
-                  const current = form.getValues()["input"] || "";
-                  const newValue = current ? `${current}\n${data}` : data;
+              {typeof window !== "undefined" && (
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <AudioRecorder
+                    onData={(data) => {
+                      const current = form.getValues()["input"] || "";
+                      const newValue = current ? `${current}\n${data}` : data;
 
-                  form.setValue("input", newValue);
-                }}
-                onRecord={(isRecording) => setIsRecording(isRecording)}
-              />
+                      form.setValue("input", newValue);
+                    }}
+                    onRecord={(isRecording) => setIsRecording(isRecording)}
+                  />
+                </React.Suspense>
+              )}
               <FormControl>
                 <Textarea
                   className={cn("min-h-[250px]", {
