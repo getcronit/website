@@ -12,6 +12,7 @@ import { FaMicrophone } from "@react-icons/all-files/fa/FaMicrophone";
 import { FaStopCircle } from "@react-icons/all-files/fa/FaStopCircle";
 
 import { Button } from "./ui/button";
+import { toast } from "./ui/use-toast";
 
 interface AudioRecorderProps {
   onRecord: (isRecording: boolean) => void;
@@ -65,6 +66,11 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
     ws.onmessage = (ev) => {
       props.onData(ev.data);
       props.onRecord(false);
+
+      toast({
+        title: "Success",
+        description: "Transcription complete",
+      });
     };
 
     return () => {
@@ -78,11 +84,36 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
       const recorder = new MediaRecorder(stream, { mimeType: "audio/wav" });
 
       recorder.ondataavailable = (e) => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-          webSocket.send(e.data);
+          const size = e.data.size;
+
+          if (size > 0) {
+            webSocket.send(e.data);
+
+            toast({
+              title: "Processing",
+              // Size in MB
+              description: `Sending ${(size / 1024 / 1024).toFixed(
+                2
+              )} MB of audio data`,
+            });
+          } else {
+            toast({
+              title: "Error",
+              description: "No audio data was received",
+              variant: "destructive",
+            });
+          }
+        } else {
+          toast({
+            title: "Error",
+            description: "WebSocket connection is not open",
+            variant: "destructive",
+          });
         }
       };
 
