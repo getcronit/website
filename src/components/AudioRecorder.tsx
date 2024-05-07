@@ -7,7 +7,7 @@ import {
 import { connect } from "extendable-media-recorder-wav-encoder";
 import { cn } from "@/lib/utils";
 import { User } from "oidc-client-ts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaMicrophone } from "@react-icons/all-files/fa/FaMicrophone";
 import { FaStopCircle } from "@react-icons/all-files/fa/FaStopCircle";
 
@@ -23,7 +23,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<IMediaRecorder>(null);
 
-  const [webSocket, setWebSocket] = useState<WebSocket>(null);
+  const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     let port: MessagePort;
@@ -43,43 +43,36 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
     };
   }, []);
 
-  useEffect(() => {
+  const connectWS = () => {
     const oidcStorage = sessionStorage.getItem(
       `oidc.user:${__JAEN_ZITADEL__.authority}:${__JAEN_ZITADEL__.clientId}`
     );
 
-    let token: string = "";
+    const token = oidcStorage
+      ? User.fromStorageString(oidcStorage).access_token
+      : "";
 
-    if (oidcStorage) {
-      const user = User.fromStorageString(oidcStorage);
+    if (ws?.current?.readyState !== WebSocket.OPEN) {
+      const websocket = new WebSocket(
+        `wss://website-pylon.cronit.io/transcribe?token=${token}`
+        // `ws://localhost:3000/transcribe?token=${token}`
+      );
 
-      token = user.access_token;
+      websocket.onmessage = (ev) => {
+        props.onData(ev.data);
+        props.onRecord(false);
+
+        toast({
+          title: "Success",
+          description: "Transcription complete",
+        });
+      };
+
+      ws.current = websocket;
     }
 
-    const ws = new WebSocket(
-      `wss://website-pylon.cronit.io/transcribe?token=${token}`
-      // `ws://localhost:3000/transcribe?token=${token}`
-    );
-
-    setWebSocket(ws);
-
-    ws.onmessage = (ev) => {
-      props.onData(ev.data);
-      props.onRecord(false);
-
-      toast({
-        title: "Success",
-        description: "Transcription complete",
-      });
-    };
-
-    return () => {
-      // Close WebSocket connection when component unmounts
-      if (ws) {
-        ws.close();
-      }
-    };
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+    return ws.current;
+  };
 
   const startRecording = async () => {
     try {
@@ -87,12 +80,14 @@ const AudioRecorder: React.FC<AudioRecorderProps> = (props) => {
 
       const recorder = new MediaRecorder(stream, { mimeType: "audio/wav" });
 
+      const socket = connectWS();
+
       recorder.ondataavailable = (e) => {
-        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
           const size = e.data.size;
 
           if (size > 0) {
-            webSocket.send(e.data);
+            socket.send(e.data);
 
             toast({
               title: "Processing",
