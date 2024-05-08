@@ -1,0 +1,98 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn
+
+PATH: 
+  /Users/schettn/.bun/bin:/Users/schettn/.bun/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/MacGPG2/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/schettn/.bun/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:/opt/homebrew/bin:/opt/homebrew/sbin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.15.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Invariant Violation: could not find a copy of snek-query to link in /Users/schettn/Documents/cronit.io/node_modules/snek-query/node_modules
+      at invariant (/usr/local/lib/node_modules/yarn/lib/cli.js:2318:15)
+      at PackageLinker.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:48522:7)
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+npm manifest: 
+  {
+    "name": "cronit.io",
+    "version": "1.0.0",
+    "private": true,
+    "description": "mailpress",
+    "author": "Nico Schett",
+    "keywords": [
+      "gatsby"
+    ],
+    "scripts": {
+      "develop": "gatsby develop",
+      "start": "gatsby develop",
+      "build": "gatsby build",
+      "serve": "gatsby serve",
+      "clean": "gatsby clean",
+      "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+      "@atsnek/jaen": "^1.0.0-rc.73",
+      "@atsnek/jaen-fields-mdx": "^1.0.0-rc.18",
+      "@hookform/resolvers": "^3.3.4",
+      "@radix-ui/react-avatar": "^1.0.4",
+      "@radix-ui/react-checkbox": "^1.0.4",
+      "@radix-ui/react-collapsible": "^1.0.3",
+      "@radix-ui/react-dialog": "^1.0.5",
+      "@radix-ui/react-dropdown-menu": "^2.0.6",
+      "@radix-ui/react-label": "^2.0.2",
+      "@radix-ui/react-popover": "^1.0.7",
+      "@radix-ui/react-slot": "^1.0.2",
+      "@radix-ui/react-toast": "^1.1.5",
+      "@tailwindcss/typography": "^0.5.10",
+      "@tanstack/react-table": "^8.16.0",
+      "class-variance-authority": "^0.7.0",
+      "clsx": "^2.1.0",
+      "date-fns": "^3.6.0",
+      "extendable-media-recorder": "^9.2.2",
+      "extendable-media-recorder-wav-encoder": "^7.0.109",
+      "gatsby": "^5.13.3",
+      "gatsby-jaen-mailpress": "^0.0.6",
+      "gatsby-plugin-jaen": "^1.0.0-rc.96",
+      "lucide-react": "^0.359.0",
+      "postcss-focus-visible": "^9.0.1",
+      "react": "^18.2.0",
+      "react-day-picker": "^8.10.0",
+      "react-dom": "^18.2.0",
+      "react-hook-form": "^7.51.1",
+      "snek-query": "^0.0.110",
+      "tailwind-merge": "^2.2.2",
+      "tailwindcss-animate": "^1.0.7",
+      "validator": "^13.11.0",
+      "zod": "^3.22.4"
+    },
+    "devDependencies": {
+      "@types/node": "^20.11.19",
+      "@types/react": "^18.2.55",
+      "@types/react-dom": "^18.2.19",
+      "@types/validator": "^13.11.9",
+      "autoprefixer": "^10.4.16",
+      "gatsby-plugin-postcss": "^6.13.0",
+      "postcss": "^8.4.33",
+      "tailwindcss": "^3.4.1",
+      "typescript": "^5.3.3"
+    },
+    "resolutions": {
+      "snek-query": "^0.0.114"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

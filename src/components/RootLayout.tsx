@@ -19,7 +19,6 @@ import { Offices } from "@/components/Offices";
 import { SocialMedia } from "@/components/SocialMedia";
 import { NoSSR } from "./NoSSR";
 import { cn } from "@/lib/utils";
-import { Toaster } from "./ui/toaster";
 
 const RootLayoutContext = createContext({});
 
@@ -271,7 +270,6 @@ export function RootLayout({ children, pathname }) {
   return (
     <RootLayoutContext.Provider value={{ logoHovered, setLogoHovered }}>
       <RootLayoutInner key={pathname}>{children}</RootLayoutInner>
-      <Toaster />
     </RootLayoutContext.Provider>
   );
 }
