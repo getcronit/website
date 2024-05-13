@@ -1621,6 +1621,14 @@ export type OmitInput_3 = {
     NOT?: OrganizationWhereInputInput[];
     users?: UserListRelationFilterInput;
 };
+export type TaxesInput = {
+    type: TaxTypeInput;
+    total: t.Number;
+};
+export type PaymentMethodsInput = {
+    type: PaymentMethodTypeInput;
+    total: t.Number;
+};
 
 export class Query {
     __typename: t.String;
@@ -1874,6 +1882,13 @@ export class Mutation {
     registerDelete: (args: {
         id: t.Number;
     }) => Register;
-    constructor() { this.__typename = ""; this.registerCreate = fnProxy(Register); this.registerUpdate = fnProxy(Register); this.registerDelete = fnProxy(Register); }
+    addEndOfDayTransaction: (args: {
+        registerId: t.Number;
+        timestamp: t.Date;
+        revenue: t.Number;
+        taxes: TaxesInput[];
+        paymentMethods: PaymentMethodsInput[];
+    }) => Transaction;
+    constructor() { this.__typename = ""; this.registerCreate = fnProxy(Register); this.registerUpdate = fnProxy(Register); this.registerDelete = fnProxy(Register); this.addEndOfDayTransaction = fnProxy(Transaction); }
 }
 

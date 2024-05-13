@@ -15,7 +15,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  CalendarIcon,
+  ChevronDown,
+  MoreHorizontal,
+  PlusIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -62,12 +68,16 @@ import {
 import { sq } from "@/pylons/kassabuch";
 import {
   PaymentMethodType,
+  PaymentMethodTypeInput,
+  RegisterType,
   Tax,
   TaxType,
+  TaxTypeInput,
   Transaction,
 } from "@/pylons/kassabuch/src/schema.generated";
 import { Link } from "gatsby";
 import { useLazyQuery } from "snek-query/react-hooks";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type TransactionType = {
   timestamp: string;
@@ -95,6 +105,300 @@ function getMonthNameFromIndex(monthIndex: number): string {
   return date.toLocaleDateString(undefined, { month: "long" });
 }
 
+interface ManuelCreateTransactionButtonProps {
+  registerId: number;
+  onCreated: () => void;
+}
+
+const ManuelCreateTransactionSchema = z.object({
+  timestamp: z.date(),
+  taxes: z.array(
+    z.object({
+      type: z.nativeEnum(TaxTypeInput),
+      total: z.number(),
+    })
+  ),
+  paymentMethods: z.array(
+    z.object({
+      type: z.nativeEnum(PaymentMethodTypeInput),
+      total: z.number(),
+    })
+  ),
+  revenue: z.number(),
+});
+
+const ManuelCreateTransactionButton: React.FC<
+  ManuelCreateTransactionButtonProps
+> = ({ registerId, onCreated }) => {
+  const [open, setOpen] = React.useState(false);
+
+  const form = useForm<z.infer<typeof ManuelCreateTransactionSchema>>({
+    resolver: zodResolver(ManuelCreateTransactionSchema),
+    defaultValues: {
+      timestamp: new Date(),
+      taxes: [
+        { type: TaxTypeInput.MWST_10, total: 0 },
+        { type: TaxTypeInput.MWST_20, total: 0 },
+      ],
+      paymentMethods: [
+        { type: PaymentMethodTypeInput.CASH, total: 0 },
+        { type: PaymentMethodTypeInput.CARD, total: 0 },
+      ],
+    },
+  });
+
+  React.useEffect(() => {
+    if (form.formState.isSubmitSuccessful) {
+      form.reset();
+      setOpen(false);
+    }
+  }, [form.formState.isSubmitSuccessful, form.reset]);
+
+  async function onSubmit(data: z.infer<typeof ManuelCreateTransactionSchema>) {
+    console.log(data);
+
+    try {
+      const [_, errors] = await sq.mutate((m) =>
+        m.addEndOfDayTransaction({
+          registerId: registerId,
+          timestamp: data.timestamp.toISOString(),
+          taxes: data.taxes.map((tax) => ({
+            type: asEnumKey(TaxTypeInput, tax.type),
+            total: tax.total,
+          })),
+          paymentMethods: data.paymentMethods.map((paymentMethod) => ({
+            type: asEnumKey(PaymentMethodTypeInput, paymentMethod.type),
+            total: paymentMethod.total,
+          })),
+          revenue: data.revenue,
+        })
+      );
+
+      if (errors) {
+        throw new Error(errors[0].message);
+      }
+
+      toast({
+        title: "Transaction created",
+        description: "Die Transaktion wurde erfolgreich erstellt.",
+      });
+
+      onCreated();
+    } catch (error) {
+      toast({
+        title: "Transaction creation failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Manuelle Eingabe
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>Manuelle Eingabe</DialogHeader>
+        <DialogDescription>
+          Füge eine Transaktion manuell hinzu. Dies kann nicht rückgängig
+          gemacht werden.
+        </DialogDescription>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="timestamp"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Datum</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Wähle ein Datum</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    Wähle das Datum der Transaktion.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="taxes.0"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Steuern 10%</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value?.total}
+                      onChange={(event) =>
+                        field.onChange({
+                          type: TaxType.MWST_10,
+                          total: parseFloat(event.target.value),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Füge die Steuern 10% hinzu.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="taxes.1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Steuern 20%</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value?.total}
+                      onChange={(event) =>
+                        field.onChange({
+                          type: TaxType.MWST_20,
+                          total: parseFloat(event.target.value),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Füge die Steuern 20% hinzu.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentMethods.0"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bar</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value?.total}
+                      onChange={(event) =>
+                        field.onChange({
+                          type: PaymentMethodType.CASH,
+                          total: parseFloat(event.target.value),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Füge Barzahlungen hinzu.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentMethods.1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Karte</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value?.total}
+                      onChange={(event) =>
+                        field.onChange({
+                          type: PaymentMethodType.CARD,
+                          total: parseFloat(event.target.value),
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Füge Kartenzahlungen hinzu.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="revenue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Umsatz</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value}
+                      onChange={(event) =>
+                        field.onChange(parseFloat(event.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Füge den Umsatz hinzu.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                // disabled={
+                //   form.formState.isSubmitting || !form.formState.isValid
+                // }
+              >
+                <ReloadIcon
+                  className={cn("mr-2 h-4 w-4 animate-spin", {
+                    hidden: !form.formState.isSubmitting,
+                  })}
+                />
+                Erstellen
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export const columns: ColumnDef<TransactionType>[] = [
   {
     accessorKey: "timestamp",
@@ -111,17 +415,14 @@ export const columns: ColumnDef<TransactionType>[] = [
     },
     cell: ({ row }) => {
       const timestamp = new Date(row.getValue("timestamp"));
-      const formattedTime = timestamp.toLocaleDateString("de-AT", {
+      const formattedDate = timestamp.toLocaleDateString("de-AT", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
       });
 
-      return <div className="capitalize">{formattedTime}</div>;
+      return <div className="capitalize">{formattedDate}</div>;
     },
   },
   {
@@ -499,39 +800,6 @@ export const DataTableDemo: React.FC<{ registerId: number }> = (props) => {
             </SelectContent>
           </Select>
         </div>
-
-        <div className="ml-auto space-x-2">
-          <Button variant="outline">
-            <span className="sr-only">Transaktion hinzufügen</span>
-            Manuelle Eingabe
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -615,6 +883,34 @@ import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { pylonURL } from "@/pylons/kassabuch/src";
 import { User } from "oidc-client-ts";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { asEnumKey } from "snek-query";
 
 const JournalUploadButton: React.FC<{
   onUpload: () => void;
@@ -701,9 +997,9 @@ const Page: React.FC<PageProps> = (props) => {
 
   const [_, { data, errors, refetch }] = useLazyQuery(sq);
 
-  const registerName = data.me.register({
+  const { name: registerName, type: registerType } = data.me.register({
     where: { id: registerId },
-  }).name;
+  });
 
   React.useEffect(() => {
     refetch();
@@ -735,10 +1031,17 @@ const Page: React.FC<PageProps> = (props) => {
       <div className="flex items-center justify-between py-4">
         <h1 className="text-2xl font-semibold">{registerName}</h1>
 
-        <JournalUploadButton onUpload={refetch} registerId={registerId} />
+        {registerType === RegisterType.MANUEL ? (
+          <ManuelCreateTransactionButton
+            registerId={registerId}
+            onCreated={refetch}
+          />
+        ) : (
+          <JournalUploadButton onUpload={refetch} registerId={registerId} />
+        )}
       </div>
 
-      <DataTableDemo registerId={registerId} />
+      <DataTableDemo key={registerName} registerId={registerId} />
     </div>
   );
 };

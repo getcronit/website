@@ -135,6 +135,8 @@ import { FaCashRegister } from "@react-icons/all-files/fa/FaCashRegister";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
+import { User } from "oidc-client-ts";
+import { pylonURL } from "@/pylons/kassabuch/src";
 
 const getColorForId = (id: number) => {
   const hue = (id * 137.508) % 360; // Generate hue based on the id
@@ -386,7 +388,48 @@ export const columns: ColumnDef<RegisterType>[] = [
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(register.id)}
+              onClick={async () => {
+                const oidcStorage = sessionStorage.getItem(
+                  `oidc.user:${__JAEN_ZITADEL__.authority}:${__JAEN_ZITADEL__.clientId}`
+                );
+
+                if (oidcStorage) {
+                  const user = User.fromStorageString(oidcStorage);
+
+                  const res = await fetch(
+                    `${pylonURL}/register/${register.id}/export`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${user.access_token}`,
+                      },
+                    }
+                  );
+
+                  let fileName = res.headers
+                    .get("Content-Disposition")
+                    ?.split("filename=")[1];
+
+                  // Cut off the quotes
+                  fileName = fileName?.substring(1, fileName.length - 1);
+
+                  // This returns a csv file that should be downloaded
+                  const blob = await res.blob();
+
+                  const url = window.URL.createObjectURL(blob);
+
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = fileName || `register-${register.id}.csv`;
+                  a.click();
+
+                  window.URL.revokeObjectURL(url);
+
+                  toast({
+                    title: "Success",
+                    description: "Erfolgreich exportiert.",
+                  });
+                }
+              }}
             >
               Exportieren als CSV
             </DropdownMenuItem>
