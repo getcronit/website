@@ -3,7 +3,7 @@ import { User } from "oidc-client-ts";
 import { makeSnekQuery } from "snek-query";
 import { Query, Mutation } from "./schema.generated";
 
-export const pylonURL = "http://localhost:3000";
+export const pylonURL = "https://pylons.cronit.io/kassabuch";
 
 export const sq = makeSnekQuery(
   { Query, Mutation },
