@@ -777,7 +777,16 @@ export { Head } from "@atsnek/jaen";
 
 export const pageConfig: PageConfig = {
   label: "Kassabuch",
+  icon: "FaCashRegister",
   layout: {
     name: "jaen",
+  },
+  menu: {
+    type: "app",
+    label: "Kassabuch",
+  },
+  auth: {
+    isRequired: true,
+    roles: ["260237544631828483:kassabuch:admin"],
   },
 };

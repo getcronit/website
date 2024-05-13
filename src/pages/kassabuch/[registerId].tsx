@@ -1055,4 +1055,8 @@ export const pageConfig: PageConfig = {
   layout: {
     name: "jaen",
   },
+  auth: {
+    isRequired: true,
+    roles: ["260237544631828483:kassabuch:admin"],
+  },
 };
