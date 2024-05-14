@@ -415,14 +415,17 @@ export const columns: ColumnDef<TransactionType>[] = [
     },
     cell: ({ row }) => {
       const timestamp = new Date(row.getValue("timestamp"));
-      const formattedDate = timestamp.toLocaleDateString("de-AT", {
+      const formattedDatetime = timestamp.toLocaleDateString("de-AT", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
       });
 
-      return <div className="capitalize">{formattedDate}</div>;
+      return <div className="capitalize">{formattedDatetime}</div>;
     },
   },
   {
