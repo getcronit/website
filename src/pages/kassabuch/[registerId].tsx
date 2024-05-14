@@ -70,6 +70,7 @@ import {
   PaymentMethodType,
   PaymentMethodTypeInput,
   RegisterType,
+  SortOrderInput,
   Tax,
   TaxType,
   TaxTypeInput,
@@ -679,6 +680,7 @@ export const DataTableDemo: React.FC<{ registerId: number }> = (props) => {
                 }
               : {},
         },
+        orderBy: [{ timestamp: asEnumKey(SortOrderInput, "asc") }],
       }).nodes;
 
     return nodes.map((transaction: Transaction) => {
