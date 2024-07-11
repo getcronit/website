@@ -24,7 +24,7 @@ const config: GatsbyConfig = {
         },
         sentry: {
           org: "cronit",
-          project: "website",
+          project: "cronit-io",
           dsn: "https://d09bdda1cf0a74ccc8f1041bf6ba8d0d@sentry.cronit.io/11",
         },
         googleAnalytics: {
